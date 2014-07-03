@@ -2466,7 +2466,10 @@ function nanoGALLERY() {
         var rowNum=0;
 
         var rowHeight=[];
+        var maxRowHeight=0;
         var bNewRow=false;
+        var bSameSize=true;
+        var lastThumbWidth = 0, lastThumbHeight = 0;
         $g_containerThumbnails.find('.nanoGalleryThumbnailContainer').each(function() {
           var n=jQuery(this).data("index");
           if( n !== undefined && g_ngItems[n].thumbWidth>0) {
@@ -2509,13 +2512,31 @@ function nanoGALLERY() {
                 curWidth+=w;
                 var rH=Math.floor(gO.thumbnailHeight*areaW/curWidth);
                 rowHeight[rowNum]=rH;
+                maxRowHeight=Math.max(maxRowHeight,rH);
                 rowLastItem[rowNum]=n;
                 bNewRow=true;
               }
+
+              if (lastThumbWidth != 0 &&
+                  lastThumbHeight != 0 && (
+                  lastThumbWidth != item.thumbWidth ||
+                  lastThumbHeight != item.thumbHeight)) {
+                  bSameSize = false;
+              }
+              lastThumbWidth = item.thumbWidth;
+              lastThumbHeight = item.thumbHeight;
             }
             
           }
         });
+        
+        // prevent the last row height from exceeding
+        // the max row height throughout the gallery, if
+        // all thumbs are of the same size.
+        if( maxRowHeight > 0 && rowNum > 0 &&
+            bSameSize) {
+            rowHeight[rowNum]=Math.min(rowHeight[rowNum],maxRowHeight);
+        }
         
         rowNum=0;
         curPosY=0;
