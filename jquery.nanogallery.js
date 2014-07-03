@@ -3024,6 +3024,7 @@ function nanoGALLERY() {
       }).on('click','.nanoGalleryThumbnailContainer', function(event){
 
         var $this = jQuery(this);
+        var labelClicked = $(event.target).hasClass ("labelTitle");
 
         //updatePreviousTouched(e);
 
@@ -3042,7 +3043,7 @@ function nanoGALLERY() {
         //}
         //g_touched = false;
 
-        ThumbnailClick(this);
+        ThumbnailClick(this, labelClicked);
         
         return;
       });    
@@ -3271,11 +3272,13 @@ function nanoGALLERY() {
     }
   }
   
-  function ThumbnailClick( elt ) {
+  function ThumbnailClick( elt, labelClicked ) {
     var n=jQuery(elt).data('index');
     if( gO.touchAnimation == false || g_ngItems[n].hovered === true ) {
       // open URL
-      if( g_ngItems[n].destinationURL !== undefined && g_ngItems[n].destinationURL.length >0 ) {
+      // (only if label was clicked)
+      if( g_ngItems[n].destinationURL !== undefined && g_ngItems[n].destinationURL.length >0 &&
+          labelClicked) {
         window.location = g_ngItems[n].destinationURL;
         return;
       }
@@ -5208,7 +5211,7 @@ return;
     
     var l=g_ngItems.length;
     for( var j=n+1; j<l ; j++) {
-      if( g_ngItems[j].kind == 'image' && g_ngItems[j].albumID == g_ngItems[imageIdx].albumID && g_ngItems[j].destinationURL == '' ) {
+      if( g_ngItems[j].kind == 'image' && g_ngItems[j].albumID == g_ngItems[imageIdx].albumID ) {// && g_ngItems[j].destinationURL == '' ) {
         current++;
         lstImages[current]=new Object;
         lstImages[current].href=g_ngItems[j].responsiveURL();
@@ -5216,7 +5219,7 @@ return;
       }
     }
     for( var j=0; j<n; j++) {
-      if( g_ngItems[j].kind == 'image' && g_ngItems[j].albumID == g_ngItems[imageIdx].albumID && g_ngItems[j].destinationURL == '' ) {
+      if( g_ngItems[j].kind == 'image' && g_ngItems[j].albumID == g_ngItems[imageIdx].albumID ) {// && g_ngItems[j].destinationURL == '' ) {
         current++;
         lstImages[current]=new Object;
         lstImages[current].href=g_ngItems[j].responsiveURL();
