@@ -2518,9 +2518,6 @@ function nanoGALLERY() {
                 rowLastItem[rowNum]=n;
                 bNewRow=true;
               }
-
-              lastThumbWidth = item.thumbWidth;
-              lastThumbHeight = item.thumbHeight;
             }
             
           }
