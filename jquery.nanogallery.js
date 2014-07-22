@@ -97,6 +97,9 @@ nanoGALLERY v4.4.2 release notes.
       lazyBuild:'none',
       lazyBuildTreshold:150,
       flickrSkipOriginal:true,
+      // When auto width is used, enabling this option
+      // will restrict the last row's height.
+      adjustLastRowHeight:false,
       i18n:{
         'breadcrumbHome':'List of Albums','breadcrumbHome_FR':'Liste des Albums',
         'paginationPrevious':'Previous','paginationPrevious_FR':'Pr&eacute;c&eacute;dent','paginationPrevious_DE':'Zur&uuml;ck','paginationPrevious_IT':'Indietro',
@@ -2466,20 +2469,29 @@ function nanoGALLERY() {
         var rowNum=0;
 
         var rowHeight=[];
-        var maxRowHeight=0;
+        var maxRowHeightVertical=0;     // max height of a row with vertical thumbs
+        var maxRowHeightHorizontal=0;   // max height of a row with horizontal thumbs
+        var rowHasVertical=false;       // current row has vertical thumbs
+        var rowHasHorizontal=false;     // current row has horizontal thumbs
         var bNewRow=false;
         $g_containerThumbnails.find('.nanoGalleryThumbnailContainer').each(function() {
           var n=jQuery(this).data("index");
           if( n !== undefined && g_ngItems[n].thumbWidth>0) {
             var item=g_ngItems[n];
-            
-            var w=Math.ceil(item.thumbWidth/item.thumbHeight*gO.thumbnailHeight)+g_thumbnailBorderWidth+g_thumbnailImgContBorderWidth;
 
+            var w=Math.ceil(item.thumbWidth/item.thumbHeight*gO.thumbnailHeight)+g_thumbnailBorderWidth+g_thumbnailImgContBorderWidth;
             if( bNewRow ) {
               bNewRow=false;
               rowNum++;
               curWidth=0;
+              rowHasVertical=false;
+              rowHasHorizontal=false;
             }
+            
+            if( item.thumbHeight > item.thumbWidth )
+                rowHasVertical = true;
+            else
+                rowHasHorizontal = true;
             
             if( gO.thumbnailWidth != 'auto' ) {
               // up scale image resolution
@@ -2504,8 +2516,10 @@ function nanoGALLERY() {
                 curWidth+=w;
                 rowHeight[rowNum]=gO.thumbnailHeight;
                 // prevent current row from being heigher than the others.
-                if (maxRowHeight > 0)
-                    rowHeight[rowNum]=Math.min(rowHeight[rowNum],maxRowHeight);
+                var rowHeightLimit=Math.max(rowHasVertical ? maxRowHeightVertical : 0,
+                                            rowHasHorizontal ? maxRowHeightHorizontal : 0);
+                if( gO.adjustLastRowHeight && rowHeightLimit > 0 )
+                    rowHeight[rowNum]=Math.min(rowHeight[rowNum],rowHeightLimit);
                 rowLastItem[rowNum]=n;
               }
               else {
@@ -2513,8 +2527,11 @@ function nanoGALLERY() {
                 curWidth+=w;
                 var rH=Math.floor(gO.thumbnailHeight*areaW/curWidth);
                 rowHeight[rowNum]=rH;
-                // save the max row height.
-                maxRowHeight=Math.max(maxRowHeight,rH);
+                // save the max row height for each thumb orientarion.
+                if( rowHasVertical )
+                    maxRowHeightVertical=Math.max(maxRowHeightVertical,rH);
+                if( rowHasHorizontal )
+                    maxRowHeightHorizontal=Math.max(maxRowHeightHorizontal,rH);
                 rowLastItem[rowNum]=n;
                 bNewRow=true;
               }
