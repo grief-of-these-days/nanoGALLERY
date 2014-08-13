@@ -6771,7 +6771,7 @@ this.thumbImgHeight = 0;           // thumbnail image height
     
     var l=gI.length;
     for( var j=n+1; j<l ; j++) {
-      if( gI[j].kind == 'image' && gI[j].albumID == gI[imageIdx].albumID && gI[j].destinationURL == '' ) {
+      if( gI[j].kind == 'image' && gI[j].albumID == gI[imageIdx].albumID) {
         current++;
         lstImages[current]=new Object;
         lstImages[current].href=gI[j].responsiveURL();
@@ -6779,7 +6779,7 @@ this.thumbImgHeight = 0;           // thumbnail image height
       }
     }
     for( var j=0; j<n; j++) {
-      if( gI[j].kind == 'image' && gI[j].albumID == gI[imageIdx].albumID && gI[j].destinationURL == '' ) {
+      if( gI[j].kind == 'image' && gI[j].albumID == gI[imageIdx].albumID) {
         current++;
         lstImages[current]=new Object;
         lstImages[current].href=gI[j].responsiveURL();
