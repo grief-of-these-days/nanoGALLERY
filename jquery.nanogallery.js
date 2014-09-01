@@ -3724,10 +3724,15 @@ this.thumbImgHeight = 0;           // thumbnail image height
     if( $gE.conPagin == undefined ) return;
     
     $gE.conPagin.children().remove();
-    $gE.conPagin.hide ();
 
-    if( g_tn.settings.height[g_curNavLevel][g_curWidth] == 'auto' || g_tn.settings.width[g_curNavLevel][g_curWidth] == 'auto' ) { return; }
+    if( g_tn.settings.height[g_curNavLevel][g_curWidth] == 'auto' || g_tn.settings.width[g_curNavLevel][g_curWidth] == 'auto' ) {
+        // Hide pagination container, if not used.
+        $gE.conPagin.hide ();
+        return;
+    }
     
+    // Must show the container for width calculation to work.
+    $gE.conPagin.show ();
     $gE.conPagin.data('galleryIdx',albumIdx);
     $gE.conPagin.data('currentPageNumber',pageNumber);
     var n2=0,
@@ -3759,7 +3764,11 @@ this.thumbImgHeight = 0;           // thumbnail image height
     }
     
     // only one page -> do not display anything
-    if( n2==1 ) { return; }
+    if( n2==1 ) {
+        // Hide pagination container, if not used.
+        $gE.conPagin.hide ();
+        return;
+    }
     
     for(var i=firstPage; i < n2; i++ ) {
       var c='';
@@ -3786,7 +3795,6 @@ this.thumbImgHeight = 0;           // thumbnail image height
       });
     }
 
-    $gE.conPagin.show ();
     $gE.conPagin.width(w);
 
   }
