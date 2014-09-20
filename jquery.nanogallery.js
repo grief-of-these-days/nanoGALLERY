@@ -3698,7 +3698,7 @@ this.thumbImgHeight = 0;           // thumbnail image height
             tnFeaturedH=parseInt(rowHeight[0])+parseInt(rowHeight[1])+g_tn.borderHeight+g_tn.imgcBorderHeight;
           }
         }
-        
+/*        
         if( n == rowLastItem[rowNum] ) {
           // last row item
           if( rowLastItem.length != (rowNum+1) ) {
@@ -3712,7 +3712,7 @@ this.thumbImgHeight = 0;           // thumbnail image height
             }
           }
         }
-        
+*/
         var rh=0;
         if( cnt == 0 && gO.thumbnailFeatured ) {
           rh=tnFeaturedH;
