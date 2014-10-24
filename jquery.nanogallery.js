@@ -1112,8 +1112,10 @@ this.thumbImgHeight = 0;           // thumbnail image height
       
       $currentTouchedThumbnail=null;
       
-      // open URL
-      if( gI[n].destinationURL !== undefined && gI[n].destinationURL.length >0 ) {
+        // open URL
+        // (only if label was clicked)
+      if( gI[n].destinationURL !== undefined && gI[n].destinationURL.length >0 &&
+        g_labelClicked) {
         window.location = gI[n].destinationURL;
         return;
       }
@@ -4400,7 +4402,7 @@ this.thumbImgHeight = 0;           // thumbnail image height
   
 //  function ThumbnailClick( $e ) {
 //    $currentTouchedThumbnail=null;
-    g_labelClicked = false;
+//    g_labelClicked = false;
 //    var n=$e.data('index');
 //    if( n == undefined ) { return; }
 //    
@@ -4412,11 +4414,7 @@ this.thumbImgHeight = 0;           // thumbnail image height
 //      ThumbnailHoverOutAll();
 //      ThumbnailHover($e);
 //    }
-//  }
-    // (only if label was clicked)
-    if( gI[n].destinationURL !== undefined && gI[n].destinationURL.length >0 &&
-        g_labelClicked) {
-  
+//  }  
   
   function ThumbnailHoverOutAll() {
   // [TODO] --> only check displayed items
@@ -9158,22 +9156,3 @@ function makeArray( obj ) {
   return ngImagesLoaded;
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//}( jQuery ));
