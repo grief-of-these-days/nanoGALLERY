@@ -7142,26 +7142,29 @@ this.thumbImgHeight = 0;           // thumbnail image height
     var n=imageIdx,
     lstImages=[],
     current=0;
+    
+    var l=gI.length, start=0;
+    for( var j=0; j<n; j++) {
+      if( gI[j].kind == 'image' && gI[j].albumID == gI[imageIdx].albumID) {
+        lstImages[current]=new Object;
+        lstImages[current].href=gI[j].responsiveURL();
+        lstImages[current].title=gI[j].title;
+        current++;
+      }
+    }
 
+    start=current;
     lstImages[current]=new Object;
     lstImages[current].href=gI[n].responsiveURL();
     lstImages[current].title=gI[n].title;
-    
-    var l=gI.length;
+    current++;
+      
     for( var j=n+1; j<l ; j++) {
       if( gI[j].kind == 'image' && gI[j].albumID == gI[imageIdx].albumID) {
-        current++;
         lstImages[current]=new Object;
         lstImages[current].href=gI[j].responsiveURL();
         lstImages[current].title=gI[j].title;
-      }
-    }
-    for( var j=0; j<n; j++) {
-      if( gI[j].kind == 'image' && gI[j].albumID == gI[imageIdx].albumID) {
         current++;
-        lstImages[current]=new Object;
-        lstImages[current].href=gI[j].responsiveURL();
-        lstImages[current].title=gI[j].title;
       }
     }
     if( gO.fancyBoxOptions != null ) {
@@ -7169,7 +7172,8 @@ this.thumbImgHeight = 0;           // thumbnail image height
     }
     else {
       jQuery.fancybox(lstImages,{'autoPlay':false, 'nextEffect':'fade', 'prevEffect':'fade','scrolling':'no',
-        helpers    : {  buttons  : { 'position' : 'bottom'} }
+                                 helpers    : {  buttons  : { 'position' : 'bottom'} },
+                                 initialIndexOnArray: start
       });
     }
   };
