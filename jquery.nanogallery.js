@@ -245,52 +245,54 @@ nanoGALLERY v5.3.1beta release notes.
     G.tnHE = [];                      // Thumbnail hover effects
     G.L = {                           // Layout informations
       nbMaxTnPerRow: 0
-      
-    },
-    g_blackList = null,
-    g_whiteList = null,
-    g_albumList = null,
-    g_galleryItemsCount = 0,
-    g_toolbarMode = 'std',            // image toolbar display mode
-    g_playSlideshow = false,          // slideshow mode
-    g_playSlideshowTimerID = 0,       // slideshow mode timer ID
-    g_slideshowDelay = 3000,          // slideshow mode delay
-    g_touchAutoOpenDelayTimerID = 0,
-    g_supportFullscreenAPI = false,
-    g_viewerIsFullscreen = false,
-    g_bodyOverflowInitial = null,
-    g_i18nLang = '',
-    g_timeImgChanged = 0,
-    g_timeLastTouchStart = 0,
-    g_pgMaxNbThumbnailsPerRow = 1,
-    g_pgMaxLinesPerPage = 0,
-    g_lastOpenAlbumID = -1,
-    g_lastLocationHash = '',
-    g_viewerImageIsChanged = false,
-    g_viewerResizeTimerID = -1,
-    g_viewerCurrentItemIdx = -1,
-    g_imageSwipePosX = 0,
-    g_albumIdxToOpenOnViewerClose = -1,
-    g_custGlobals = {},
-    g_delayedAlbumIdx = -1,
-    g_curAlbumIdx = -1,
-    g_delayedSetLocationHash = false,
-    g_viewerSwipe = null,
-    g_aengine = 'animate',
-    g_scrollTimeOut = 0,
-    g_scrollTimeOut2 = 0,
-    g_maxAlbums = 1000000,
-    g_maxPhotos = 1000000,
-    g_curNavLevel = 'l1',
-    g_curWidth = 'me',
-    g_gallerySwipeInitDone = false,
-    g_emptyGif = 'data:image/gif;base64,R0lGODlhEAAQAIAAAP///////yH5BAEKAAEALAAAAAAQABAAAAIOjI+py+0Po5y02ouzPgUAOw==',
-    g_CSStransformName = FirstSupportedPropertyName(["transform", "msTransform", "MozTransform", "WebkitTransform", "OTransform"]),
-    g_CSStransformStyle = FirstSupportedPropertyName(["transformStyle", "msTransformStyle", "MozTransformStyle", "WebkitTransformStyle", "OTransformStyle"]),
-    g_CSSperspective = FirstSupportedPropertyName(["perspective", "msPerspective", "MozPerspective", "WebkitPerspective", "OPerspective"]),
-    g_CSSbackfaceVisibilityName = FirstSupportedPropertyName(["backfaceVisibility", "msBackfaceVisibility", "MozBackfaceVisibility", "WebkitBackfaceVisibility", "OBackfaceVisibility"]),
-    g_CSStransitionName = FirstSupportedPropertyName(["transition", "msTransition", "MozTransition", "WebkitTransition", "OTransition"]),
-    g_CSSanimationName = FirstSupportedPropertyName(["animation", "msAnimation", "MozAnimation", "WebkitAnimation", "OAnimation"]);
+    };
+    G.blackList = null;
+    G.whiteList = null;
+    G.albumList = null;
+    G.galleryItemsCount = 0;
+    G.toolbarMode = 'std';            // image toolbar display mode
+    G.playSlideshow = false;          // slideshow mode
+    G.playSlideshowTimerID = 0;       // slideshow mode timer ID
+    G.slideshowDelay = 3000;          // slideshow mode delay
+    G.touchAutoOpenDelayTimerID = 0;
+    G.supportFullscreenAPI = false;
+    
+    
+    G.viewerIsFullscreen = false;
+    G.bodyOverflowInitial = null;
+    G.i18nLang = '';
+    G.timeImgChanged = 0;
+    G.timeLastTouchStart = 0;
+    G.pgMaxNbThumbnailsPerRow = 1;
+    G.pgMaxLinesPerPage = 0;
+    G.lastOpenAlbumID = -1;
+    G.lastLocationHash = '';
+    G.viewerImageIsChanged = false;
+    G.viewerResizeTimerID = -1;
+    G.viewerCurrentItemIdx = -1;
+    G.imageSwipePosX = 0;
+    G.albumIdxToOpenOnViewerClose = -1;
+    G.custGlobals = {};
+    G.delayedAlbumIdx = -1;
+    G.curAlbumIdx = -1;
+    G.delayedSetLocationHash = false;
+    G.viewerSwipe = null;
+    G.aengine = 'animate';      // animation engine
+    G.scrollTimeOut = 0;
+    G.scrollTimeOut2 = 0;
+    G.maxAlbums = 1000000;
+    G.maxPhotos = 1000000;
+    G.curNavLevel = 'l1';
+    G.curWidth = 'me';
+    G.gallerySwipeInitDone = false;
+    G.emptyGif = 'data:image/gif;base64,R0lGODlhEAAQAIAAAP///////yH5BAEKAAEALAAAAAAQABAAAAIOjI+py+0Po5y02ouzPgUAOw==';
+    G.CSStransformName = FirstSupportedPropertyName(["transform", "msTransform", "MozTransform", "WebkitTransform", "OTransform"]);
+    G.CSStransformStyle = FirstSupportedPropertyName(["transformStyle", "msTransformStyle", "MozTransformStyle", "WebkitTransformStyle", "OTransformStyle"]);
+    G.CSSperspective = FirstSupportedPropertyName(["perspective", "msPerspective", "MozPerspective", "WebkitPerspective", "OPerspective"]);
+    G.CSSbackfaceVisibilityName = FirstSupportedPropertyName(["backfaceVisibility", "msBackfaceVisibility", "MozBackfaceVisibility", "WebkitBackfaceVisibility", "OBackfaceVisibility"]);
+    G.CSStransitionName = FirstSupportedPropertyName(["transition", "msTransition", "MozTransition", "WebkitTransition", "OTransition"]);
+    G.CSSanimationName = FirstSupportedPropertyName(["animation", "msAnimation", "MozAnimation", "WebkitAnimation", "OAnimation"]);
+    G.labelClicked = false;
     /* IE detection. Copyright Julian Shapiro - Gist: https://gist.github.com/julianshapiro/9098609 */
     G.IE = (function() {
       if (document.documentMode) {
@@ -1045,43 +1047,6 @@ nanoGALLERY v5.3.1beta release notes.
       
     }
   
-  
-  function ElementTranslateX( element, posX ) {
-    jQuery(element).css({ 'left': posX }); 
-    
-    // [TODO] - translateX needs some code refactoring...
-    //var transformStyle = 'translateX('+posX+'px)';
-    //element.style.msTransform = transformStyle;
-    //element.style.MozTransform = transformStyle;
-    //element.style.webkitTransform = transformStyle;
-    //element.style.transform = transformStyle;
-  }
-  
-  // ##### USER EVENTS HANDLING ON GALLERY (click, hover, swipe, drag)
-  // based on "Implement Custom Gestures" from Google
-  // https://developers.google.com/web/fundamentals/input/touch-input/touchevents/
-  function userEventsGallery(element) {
-    var elementToSwipe=element,
-    isAnimating=false,
-    initialTouchPos=null,
-    lastTouchPos=null,
-    currentXPosition=0,
-    onlyX=false,
-    startViewport=null;
-    
-    var initialViewport=0;
-    
-    function OpenThumbnail( n ) {
-      if( n == undefined ) { return; }
-      
-      if( $currentTouchedThumbnail != null) { ThumbnailHoverOut($currentTouchedThumbnail); }
-      $currentTouchedThumbnail=null;
-      
-      // open URL
-      if( gI[n].destinationURL !== undefined && gI[n].destinationURL.length >0 ) {
-        window.location = gI[n].destinationURL;
-        return;
-      }
 
     function ScrollbarSetVisible() {
       //jQuery('body').css({overflow:'initial'});
@@ -1129,7 +1094,9 @@ nanoGALLERY v5.3.1beta release notes.
         G.$currentTouchedThumbnail=null;
         
         // open URL
-        if( G.I[n].destinationURL !== undefined && G.I[n].destinationURL.length >0 ) {
+        // (only if label was clicked)
+        if( G.I[n].destinationURL !== undefined && G.I[n].destinationURL.length >0 &&
+          G.labelClicked ) {
           window.location = G.I[n].destinationURL;
           return;
         }
@@ -1238,27 +1205,33 @@ nanoGALLERY v5.3.1beta release notes.
       }.bind(this);
 
       
-      // if(e.touches && e.touches.length > 0) {
-      //   return;
-      // }
-      isAnimating = false;
-      onlyX=false;
-      
-      // Remove Event Listeners
-      if (window.navigator.msPointerEnabled) {
-        // Remove Pointer Event Listeners
-        document.removeEventListener('MSPointerMove', this.handleGestureMove, true);
-        document.removeEventListener('MSPointerUp', this.handleGestureEnd, true);
-      } else {
-        // Remove Touch Listeners
-        document.removeEventListener('touchmove', this.handleGestureMove, true);
-        document.removeEventListener('touchend', this.handleGestureEnd, true);
-        document.removeEventListener('touchcancel', this.handleGestureEnd, true);
-      
-        // Remove Mouse Listeners
-        document.removeEventListener('mousemove', this.handleGestureMove, true);
-        document.removeEventListener('mouseup', this.handleGestureEnd, true);
-      }
+      // Handle end gestures
+      this.handleGestureEnd = function(e) {
+        if( e.cancelable ) { e.preventDefault(); }
+        e.stopPropagation();
+        
+        // if(e.touches && e.touches.length > 0) {
+        //   return;
+        // }
+        isAnimating = false;
+        onlyX=false;
+        G.labelClicked = $(event.target).hasClass ("labelTitle");
+        
+        // Remove Event Listeners
+        if (window.navigator.msPointerEnabled) {
+          // Remove Pointer Event Listeners
+          document.removeEventListener('MSPointerMove', this.handleGestureMove, true);
+          document.removeEventListener('MSPointerUp', this.handleGestureEnd, true);
+        } else {
+          // Remove Touch Listeners
+          document.removeEventListener('touchmove', this.handleGestureMove, true);
+          document.removeEventListener('touchend', this.handleGestureEnd, true);
+          document.removeEventListener('touchcancel', this.handleGestureEnd, true);
+        
+          // Remove Mouse Listeners
+          document.removeEventListener('mousemove', this.handleGestureMove, true);
+          document.removeEventListener('mouseup', this.handleGestureEnd, true);
+        }
 
         // allow text + image selection again
         G.$E.base.addClass('unselectable').find('*').attr('draggable', 'true').attr('unselectable', 'off');
@@ -3704,12 +3677,17 @@ nanoGALLERY v5.3.1beta release notes.
             else {
               rh=rowHeight[rowNum];
             }
-          }
-          
-          if( n == rowLastItem[rowNum] ) {
-            // last row item
-            if( rowLastItem.length != (rowNum+1) ) {
-              w=areaW-lastPosX- g_tn.borderWidth-g_tn.imgcBorderWidth;//-gutterWidth;
+            
+            rh=parseInt(rh);
+            w=parseInt(w);
+            $this.width(w+G.tn.imgcBorderWidth).height(rh+G.tn.imgcBorderHeight+G.tn.labelHeight);
+            $this.find('.imgContainer').height(rh).width(w);
+            $this.find('img').css({'max-height':rh+2, 'max-width':w+2});
+            $this.find('.subcontainer').width(w+G.tn.imgcBorderWidth).height(rh+G.tn.imgcBorderHeight+G.tn.labelHeight);
+            //$this.find('.labelImage').css({left:0, right:0});
+            var x=lastPosX;
+            if( G.O.RTL) {
+              x=areaW - lastPosX - ( w + G.tn.borderWidth + G.tn.imgcBorderWidth );
             }
             $this.css({ top: curPosY , left: x });
             item.thumbFullWidth=w+G.tn.borderWidth+G.tn.imgcBorderWidth;
@@ -3729,14 +3707,7 @@ nanoGALLERY v5.3.1beta release notes.
                 tnFeaturedW2=0;
               }
             }
-          }
-          
-          var rh=0;
-          if( cnt == 0 && gO.thumbnailFeatured ) {
-            rh=tnFeaturedH;
-            tnFeaturedW2=w+ g_tn.borderWidth+g_tn.imgcBorderWidth;
-            item.customData.featured=true;
-            $this.find('img').attr('src',item.thumbX2src);
+            cnt++;
           }
           else {
             return false;
@@ -4366,57 +4337,8 @@ nanoGALLERY v5.3.1beta release notes.
             $elt.width(ThumbnailOuterWidth() - G.tn.borderWidth).height(item.thumbFullHeight-G.tn.borderHeight);
           }
         }
-        else {
-          $e.find('.labelImageTitle').css({'white-space':'nowrap'});    // no line break
-          $e.find('.labelFolderTitle').css({'white-space':'nowrap'});
-          $e.find('.labelDescription').css({'white-space':'nowrap'});
-        }
-        break;
-      case 'overImageOnTop':
-        // $e.find('.labelImage').css({'top':'0', 'height':'100%', 'width':'100%'});
-        // $e.find('.labelImage').css({top:-g_tn.imgcBorderHeight/2, bottom:g_tn.imgcBorderWidth/2, left:0, right:0 });
-        $e.find('.labelImage').css({top:0, bottom:0, left:0, right:0 });
-        break;
-      case 'overImageOnMiddle':
-        // $e.find('.labelImage').css({'top':'0', 'height':'100%', 'width':'100%'});
-        // $e.find('.labelImage').css({top:-g_tn.imgcBorderHeight/2, bottom:g_tn.imgcBorderWidth/2, left:0, right:0});
-        $e.find('.labelImage').css({top:0, bottom:0, left:0, right:0});
-        $e.find('.labelFolderTitle').css({left:0, right:0, position:'absolute', bottom:'50%'});
-        $e.find('.labelImageTitle').css({left:0, right:0, position:'absolute', bottom:'50%'});
-        $e.find('.labelDescription').css({left:0, right:0, position:'absolute', top:'50%'});
-        break;
-      case 'overImageOnBottom':
-      default :
-        gO.thumbnailLabel.position='overImageOnBottom';
-        // $e.find('.labelImage').css({'bottom':'0', 'width':'100%'});
-        // $e.find('.labelImage').css({bottom:g_tn.imgcBorderWidth/2, left:0, right:0});
-        $e.find('.labelImage').css({bottom:0, left:0, right:0});
-        break;
-    }
-  }
-  
-//  function ThumbnailClick( $e ) {
-//    $currentTouchedThumbnail=null;
-//    var n=$e.data('index');
-//    if( n == undefined ) { return; }
-//    
-//    if( gO.touchAnimation == false || gI[n].hovered === true ) {
-//      OpenThumbnail(n);
-//    }
-//    else {
-//      // hover effect on click --> touchscreen
-//      ThumbnailHoverOutAll();
-//      ThumbnailHover($e);
-//    }
-//  }
-  
-  
-  function ThumbnailHoverOutAll() {
-  // [TODO] --> only check displayed items
-    var l=gI.length;
-    for( var i=0; i < l ; i++ ) {
-      if( gI[i].hovered ) {
-        ThumbnailHoverOut(gI[i].$elt);
+        item.thumbFullWidth=ThumbnailOuterWidth();
+        $elt.find('.subcontainer').width(ThumbnailOuterWidth()-G.tn.borderWidth).height(item.thumbFullHeight-G.tn.borderHeight); //.css({'overflow':'hidden'});
       }
       else
 
@@ -7151,25 +7073,14 @@ nanoGALLERY v5.3.1beta release notes.
       vwImgC_OHt=$elt.outerHeight(true),
       vwImgC_OHf=$elt.outerHeight(false);
 
-    lstImages[current]=new Object;
-    lstImages[current].href=gI[n].responsiveURL();
-    lstImages[current].title=gI[n].title;
-    
-    var l=gI.length;
-    for( var j=n+1; j<l ; j++) {
-      if( gI[j].kind == 'image' && gI[j].albumID == gI[imageIdx].albumID && gI[j].destinationURL == '' ) {
-        current++;
-        lstImages[current]=new Object;
-        lstImages[current].href=gI[j].responsiveURL();
-        lstImages[current].title=gI[j].title;
+      var $tb=G.$E.conVwTb.find('.toolbar'),
+      tb_OHt=$tb.outerHeight(true);
+      
+      if( vwImgC_H <= 40 || !G.O.viewerToolbar.display ) {
+        G.$E.conVwTb.css({visibility:'hidden'});
       }
-    }
-    for( var j=0; j<n; j++) {
-      if( gI[j].kind == 'image' && gI[j].albumID == gI[imageIdx].albumID && gI[j].destinationURL == '' ) {
-        current++;
-        lstImages[current]=new Object;
-        lstImages[current].href=gI[j].responsiveURL();
-        lstImages[current].title=gI[j].title;
+      else {
+        G.$E.conVwTb.css({visibility:'visible'});
       }
 
       var contentOuterWidthV=Math.abs(G.$E.vwContent.outerHeight(true)-G.$E.vwContent.height()),  // vertical margin+border+padding
@@ -7226,75 +7137,45 @@ nanoGALLERY v5.3.1beta release notes.
       G.$E.vwContent.children('img').css({'max-width':(w-tH), 'max-height':(h-tV) });
 
     }
-    if( gO.fancyBoxOptions != null ) {
-      jQuery.fancybox(lstImages, gO.fancyBoxOptions);
-    }
-    else {
-      jQuery.fancybox(lstImages,{'autoPlay':false, 'nextEffect':'fade', 'prevEffect':'fade','scrolling':'no',
-        helpers    : {  buttons  : { 'position' : 'bottom'} }
-      });
-    }
-  };
-  
-  // ##### BREADCRUMB/THUMBNAIL COLOR SCHEME #####
-  function SetColorScheme( element ) {
-    var cs=null;
-    switch(toType(gO.colorScheme)) {
-      case 'object':    // user custom color scheme object 
-        cs=g_colorScheme_default;
-        jQuery.extend(true,cs,gO.colorScheme);
-        g_colorSchemeLabel='nanogallery_colorscheme_custom_'+g_baseEltID;
-        break;
-      case 'string':    // name of an internal defined color scheme
-        switch( gO.colorScheme ) {
-          case 'none':
-            return;
-            break;
-          case 'light':
-            cs=g_colorScheme_light;
-            g_colorSchemeLabel='nanogallery_colorscheme_light';
-            break;
-          case 'lightBackground':
-            cs=g_colorScheme_lightBackground;
-            g_colorSchemeLabel='nanogallery_colorscheme_lightBackground';
-            break;
-          case 'darkRed':
-            cs=g_colorScheme_darkRed;
-            g_colorSchemeLabel='nanogallery_colorscheme_darkred';
-            break;
-          case 'darkGreen':
-            cs=g_colorScheme_darkGreen;
-            g_colorSchemeLabel='nanogallery_colorscheme_darkgreen';
-            break;
-          case 'darkBlue':
-            cs=g_colorScheme_darkBlue;
-            g_colorSchemeLabel='nanogallery_colorscheme_darkblue';
-            break;
-          case 'darkOrange':
-            cs=g_colorScheme_darkOrange;
-            g_colorSchemeLabel='nanogallery_colorscheme_darkorange';
-            break;
-          case 'default':
-          case 'dark':
-          default:
-            cs=g_colorScheme_default;
-            g_colorSchemeLabel='nanogallery_colorscheme_default';
-        }
-      }
+    
+    
+    function OpenFancyBox( imageIdx ) {
+      var n=imageIdx,
+      lstImages=[],
+      current=0;
+
+      var l=G.I.length, start=0;
       for( var j=0; j<n; j++) {
-        if( G.I[j].kind == 'image' && G.I[j].albumID == G.I[imageIdx].albumID && G.I[j].destinationURL == '' ) {
-          current++;
-          lstImages[current]=new Object;
-          lstImages[current].href=G.I[j].responsiveURL();
-          lstImages[current].title=G.I[j].title;
+          if( G.I[j].kind == 'image' && G.I[j].albumID == G.I[imageIdx].albumID) {
+              lstImages[current]=new Object;
+              lstImages[current].href=G.I[j].responsiveURL();
+              lstImages[current].title=G.I[j].title;
+              current++;
+          }
+      }
+
+        start=current;
+        lstImages[current]=new Object;
+        lstImages[current].href=G.I[n].responsiveURL();
+        lstImages[current].title=G.I[n].title;
+        current++;
+      
+      for( var j=n+1; j<l ; j++) {
+        if( G.I[j].kind == 'image' && G.I[j].albumID == G.I[imageIdx].albumID) {
+            lstImages[current]=new Object;
+            lstImages[current].href=G.I[j].responsiveURL();
+            lstImages[current].title=G.I[j].title;
+            current++;
         }
       }
+      
       if( G.O.fancyBoxOptions != null ) {
         jQuery.fancybox(lstImages, G.O.fancyBoxOptions);
       }
       else {
         jQuery.fancybox(lstImages,{'autoPlay':false, 'nextEffect':'fade', 'prevEffect':'fade','scrolling':'no',
-          helpers    : {  buttons  : { 'position' : 'bottom'} }
+          helpers    : {  buttons  : { 'position' : 'bottom'} },
+          initialIndexOnArray: start
         });
       }
     };
@@ -9412,18 +9293,3 @@ function makeArray( obj ) {
 })();
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//}( jQuery ));
