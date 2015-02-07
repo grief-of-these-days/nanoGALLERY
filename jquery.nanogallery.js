@@ -540,7 +540,6 @@ nanoGALLERY v5.4.0 release notes.
     G.CSSbackfaceVisibilityName = FirstSupportedPropertyName(["backfaceVisibility", "msBackfaceVisibility", "MozBackfaceVisibility", "WebkitBackfaceVisibility", "OBackfaceVisibility"]);
     G.CSStransitionName = FirstSupportedPropertyName(["transition", "msTransition", "MozTransition", "WebkitTransition", "OTransition"]);
     G.CSSanimationName = FirstSupportedPropertyName(["animation", "msAnimation", "MozAnimation", "WebkitAnimation", "OAnimation"]);
-    G.labelClicked = false;
     /* IE detection. Copyright Julian Shapiro - Gist: https://gist.github.com/julianshapiro/9098609 */
     G.IE = (function() {
       if (document.documentMode) {
@@ -1385,9 +1384,7 @@ nanoGALLERY v5.4.0 release notes.
         }
         
         // open URL
-        // (only if label was clicked)
-        if( G.I[n].destinationURL !== undefined && G.I[n].destinationURL.length >0 &&
-          G.labelClicked ) {
+        if( G.I[n].destinationURL !== undefined && G.I[n].destinationURL.length >0 ) {
           window.location = G.I[n].destinationURL;
           return;
         }
@@ -1546,7 +1543,6 @@ nanoGALLERY v5.4.0 release notes.
         // }
         isAnimating = false;
         onlyX=false;
-        G.labelClicked = $(event.target).hasClass ("labelTitle");
         
         // Remove Event Listeners
         if (window.navigator.msPointerEnabled) {
@@ -9805,5 +9801,4 @@ function makeArray( obj ) {
 		window.ngscreenfull = ngscreenfull;
 	}
 })();
-
 
