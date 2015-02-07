@@ -1362,7 +1362,8 @@ nanoGALLERY v5.4.0 release notes.
       lastTouchPos=null,
       currentXPosition=0,
       onlyX=false,
-      startViewport=null;
+      startViewport=null,
+      isLabelTouched=false;
       
       var initialViewport=0;
       
@@ -1375,6 +1376,11 @@ nanoGALLERY v5.4.0 release notes.
         
         if( typeof G.O.fnThumbnailClicked === 'function'){
           if( !G.O.fnThumbnailClicked(G.I[n].$elt, G.I[n]) ) { return; }
+        }
+        
+        // label click callback
+        if( isLabelTouched && typeof G.O.fnThumbnailLabelClicked === 'function' ){
+            if( !G.O.fnThumbnailLabelClicked(G.I[n].$elt, G.I[n]) ) { return; }
         }
         
         // open URL
@@ -1436,14 +1442,23 @@ nanoGALLERY v5.4.0 release notes.
         G.timeLastTouchStart=new Date().getTime();
         
         var target = e.target || e.srcElement;
+        isLabelTouched = false;
+        
         var found=false;
         while( target != G.$E.conTn[0] ) {       // go element parent up to find the thumbnail element
+          var $target = jQuery(target);
+
+          // check if event target is a label
+          if ( $target.hasClass('labelImage') ) {
+              isLabelTouched = true;
+          }
+
           // if( target.getAttribute('class') == 'nanoGalleryThumbnailContainer' ) {
-          if( jQuery(target).hasClass('nanoGalleryThumbnailContainer') ) {
-            if( G.$currentTouchedThumbnail != null && !G.$currentTouchedThumbnail.is(jQuery(target)) ) {
+          if( $target.hasClass('nanoGalleryThumbnailContainer') ) {
+            if( G.$currentTouchedThumbnail != null && !G.$currentTouchedThumbnail.is($target) ) {
               ThumbnailHoverOutAll();
             }
-            G.$currentTouchedThumbnail=jQuery(target);
+            G.$currentTouchedThumbnail=$target;
             found=true;
           }
           target = target.parentNode;
