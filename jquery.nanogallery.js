@@ -1358,7 +1358,8 @@ Add: selectable class when entering in selection mode
       currentXPosition=0,
       onlyX=false,
       startViewport=null,
-      isLabelTouched=false;
+      isLabelTitleTouched=false,
+      isLabelDescriptionTouched=false;
       
       var initialViewport=0;
       
@@ -1373,9 +1374,12 @@ Add: selectable class when entering in selection mode
           if( !G.O.fnThumbnailClicked(G.I[n].$elt, G.I[n]) ) { return; }
         }
         
-        // label click callback
-        if( isLabelTouched && typeof G.O.fnThumbnailLabelClicked === 'function' ){
-            if( !G.O.fnThumbnailLabelClicked(G.I[n].$elt, G.I[n]) ) { return; }
+        // label click callbacks
+        if( isLabelTitleTouched && typeof G.O.fnThumbnailLabelTitleClicked === 'function' ){
+            if( !G.O.fnThumbnailLabelTitleClicked(G.I[n].$elt, G.I[n]) ) { return; }
+        }
+        if( isLabelDescriptionTouched && typeof G.O.fnThumbnailLabelDescriptionClicked === 'function' ){
+            if( !G.O.fnThumbnailLabelDescriptionClicked(G.I[n].$elt, G.I[n]) ) { return; }
         }
         
         // open URL
@@ -1443,15 +1447,20 @@ Add: selectable class when entering in selection mode
         G.timeLastTouchStart=new Date().getTime();
         
         var target = e.target || e.srcElement;
-        isLabelTouched = false;
+        isLabelTitleTouched=false;
+        isLabelDescriptionTouched=false;
         
         var found=false;
         while( target != G.$E.conTn[0] ) {       // go element parent up to find the thumbnail element
           var $target = jQuery(target);
 
-          // check if event target is a label
-          if ( $target.hasClass('labelImage') ) {
-              isLabelTouched = true;
+          // check if event target is an image title
+          if ( $target.hasClass('labelTitle') ) {
+              isLabelTitleTouched = true;
+          }
+          // check if event target is an image description
+          if ( $target.hasClass('labelDescription') ) {
+              isLabelDescriptionTouched = true;
           }
 
           // if( target.getAttribute('class') == 'nanoGalleryThumbnailContainer' ) {
