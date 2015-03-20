@@ -1,5 +1,5 @@
 /**!
- * @preserve nanoGALLERY v5.5.1
+ * @preserve nanoGALLERY v5.5.2
  * Plugin for jQuery by Christophe Brisbois
  * Demo: http://nanogallery.brisbois.fr
  * Sources: https://github.com/Kris-B/nanoGALLERY
@@ -22,11 +22,23 @@
 
 /*
 
-nanoGALLERY v5.5.1 release notes.
+nanoGALLERY v5.5.2 release notes.
+
+##### New features
+- Display directly an album or an image on plugin start  
+- Display the images instead of the thumbnails of the album's content  
+  
+##### New options
+- **openOnStart**: opens an album or an image at start. Syntax: `albumID` or `albumID/imageID`.  
+  *string; Default: ''*  
+- **thumbnailAlbumDisplayImage**: on album's thumbnail click, displays the images instead of the thumbnails of the album's content.  
+  *boolean; Default: false*  
+
 
 ##### Misc
-- bugfix thumbnail effects 'labelAppear' and 'labelAppear75' crashing on some browser
-
+- bugfix scrollbar not displayed in gallery fullpage mode for thumbnail effects `scale120, imageScale150Outside, overScaleOutside, imageFlipHorizontal, imageFlipVertical`  
+- bugfix lazy load not working in gallery fullpage mode  
+- bugfix thumbnail effects `borderLighter` and `borderDarker` not working on Firefox  
 
 **Visit nanoGALLERY homepage for usage details: [http://nanogallery.brisbois.fr](http://www.nanogallery.brisbois.fr/)**
 
@@ -91,19 +103,16 @@ nanoGALLERY v5.5.1 release notes.
     colorScheme : 'none', colorSchemeViewer : 'default',
     items : null,
     itemsBaseURL : '',
-    itemsSelectable : false,
-    showCheckboxes: true,
-    checkboxStyle : 'left:15px; top:15px;',
-    jsonCharset: 'Latin',
-    jsonProvider: '',
-    paginationMaxLinesPerPage : 0,
-    paginationDots : false,
+    itemsSelectable : false, showCheckboxes: true, checkboxStyle : 'left:15px; top:15px;',
+    jsonCharset: 'Latin', jsonProvider: '',
+    paginationMaxLinesPerPage : 0, paginationDots : false,
     maxWidth : 0,
     viewer : 'internal',
     viewerFullscreen: false,
-    fancyBoxOptions : null,
     viewerDisplayLogo : false,
+    fancyBoxOptions : null,
     imageTransition : 'slide',
+    openOnStart : '',
     viewerToolbar : { 
       display:true, position : 'bottom', style : 'innerImage', autoMinimize:800,
       standard:'minimizeButton , previousButton, pageCounter ,nextButton,playPauseButton,fullscreenButton,infoButton,linkOriginalButton,closeButton,label',
@@ -114,6 +123,7 @@ nanoGALLERY v5.5.1 release notes.
     thumbnailGutterWidth : 2, thumbnailGutterHeight : 2,
     thumbnailAdjustLastRowHeight : true,
     thumbnailFeatured : false,
+    thumbnailAlbumDisplayImage : false,
     thumbnailHoverEffect : null,
     thumbnailLabel : { position : 'overImageOnBottom', display : true, displayDescription : true, titleMaxLength : 0, descriptionMaxLength : 0, hideIcons : false, title : '', itemsCount : '' },
     thumbnailDisplayInterval : 5, thumbnailDisplayTransition : true,
@@ -1016,6 +1026,11 @@ nanoGALLERY v5.5.1 release notes.
       ThumbnailDefCaches();
       
       G.L.nbMaxTnPerRow=NbThumbnailsPerRow();
+
+      // display an image on start and in fullscreen
+      if( G.O.viewerFullscreen && G.O.openOnStart.indexOf('/') > 0 ) {
+        ngscreenfull.request();
+      }
       
       // lazy build the gallery
       if( G.O.lazyBuild != 'loadData' ) { NGFinalize(); }
@@ -1048,27 +1063,34 @@ nanoGALLERY v5.5.1 release notes.
       });
       
       // Event page scrolled
-      jQuery(window).on('scroll', function () {
-        if( G.scrollTimeOut ) clearTimeout(G.scrollTimeOut);
-        G.scrollTimeOut = setTimeout(function () {
-
-          if( !G.containerViewerDisplayed ) {
-            if( G.O.lazyBuild == 'loadData' ) {
-              if( inViewportVert(G.$E.conTnParent,G.O.lazyBuildTreshold) ){
-                G.O.lazyBuild='none';
-                NGFinalize();
-              }
-            }
-          
-            if( G.delayedAlbumIdx != -1 && inViewportVert(G.$E.conTnParent,G.O.lazyBuildTreshold) ){
-              DisplayAlbumFinalize( G.delayedAlbumIdx, G.delayedSetLocationHash );
-            }
-            
-            thumbnailsLazySetSrc();
-            return;
-          }
-        }, 100);
+      G.$E.base.on('scroll', function () {
+        OnScroll();
       });
+      jQuery(window).on('scroll', function () {
+        OnScroll();
+      });
+    }
+    
+    function OnScroll() {
+      if( G.scrollTimeOut ) clearTimeout(G.scrollTimeOut);
+      G.scrollTimeOut = setTimeout(function () {
+
+        if( !G.containerViewerDisplayed ) {
+          if( G.O.lazyBuild == 'loadData' ) {
+            if( inViewportVert(G.$E.conTnParent,G.O.lazyBuildTreshold) ){
+              G.O.lazyBuild='none';
+              NGFinalize();
+            }
+          }
+        
+          if( G.delayedAlbumIdx != -1 && inViewportVert(G.$E.conTnParent,G.O.lazyBuildTreshold) ){
+            DisplayAlbumFinalize( G.delayedAlbumIdx, G.delayedSetLocationHash );
+          }
+          
+          thumbnailsLazySetSrc();
+          return;
+        }
+      }, 100);
     }
     
     function getSpecialKeysPressed(e){
@@ -1274,6 +1296,13 @@ nanoGALLERY v5.5.1 release notes.
             }
             G.$E.conNavBFullpage.removeClass('setFullPageButton').addClass('removeFullPageButton');
             setElementOnTop('', G.$E.base);
+
+            for( j=0; j<G.tn.getHE().length; j++) {
+              if( /scale120|imageScale150Outside|overScaleOutside|imageFlipHorizontal|imageFlipVertical/i.test(G.tn.getHE()[j].name) ) {
+                G.$E.base.css({overflow: 'auto'});
+              }
+            }
+
             G.$E.base.addClass('fullpage');
             jQuery('body').css({overflow:'hidden'});
             ResizeGallery();
@@ -1286,6 +1315,11 @@ nanoGALLERY v5.5.1 release notes.
               jQuery(G.$E.base).css({'maxWidth':G.O.maxWidth});
             }
             G.$E.base.removeClass('fullpage');
+            for( j=0; j<G.tn.getHE().length; j++) {
+              if( /scale120|imageScale150Outside|overScaleOutside|imageFlipHorizontal|imageFlipVertical/i.test(G.tn.getHE()[j].name) ) {
+                G.$E.base.css({overflow: 'visible'});
+              }
+            }
             ScrollbarSetVisible();
             ResizeGallery();
           }
@@ -2179,6 +2213,64 @@ nanoGALLERY v5.5.1 release notes.
     // Location Hash
     function ProcessLocationHash(isTriggeredByEvent) {
 
+      // special use case -> openOnStart can be processed like location hash, only once (on start)
+      if( G.O.openOnStart != '' ) {
+        var albumID=null,
+        imageID=null,
+        p=G.O.openOnStart.indexOf('/'),
+        albumIdx=-1,
+        imageIdx=-1,
+        l=G.I.length;
+        
+        if( p > 0 ) {
+          albumID=G.O.openOnStart.substring(0,p);
+          imageID=G.O.openOnStart.substring(p+1);
+          for(var i=0; i<l; i++ ) {
+            if( G.I[i].kind == 'image' && G.I[i].GetID() == imageID ) {
+              imageIdx=i;
+              break;
+            }
+          }
+        }
+        else {
+          albumID=G.O.openOnStart;
+        }
+        for(var i=0; i<l; i++ ) {
+          if( G.I[i].kind == 'album' && G.I[i].GetID() == albumID ) {
+            albumIdx=i;
+            break;
+          }
+        }
+
+        G.O.openOnStart='';
+        
+        if( imageID !== null ) {
+        // process IMAGE
+          G.albumIdxToOpenOnViewerClose=albumIdx;
+          if( G.O.kind == '' ) {
+            DisplayImage(imageIdx);
+          }
+          else {
+            if( imageIdx == -1 ) {
+              OpenAlbum(albumIdx,false,imageID,false);
+            }
+            else {
+              DisplayImage(imageIdx);
+            }
+          }
+          return true;
+
+        }
+        else {
+          // process ALBUM
+          OpenAlbum(albumIdx,false,-1,false);
+          return true;
+        }
+      }
+    
+    
+      // standard use case -> location hash processing
+    
       if( !G.O.locationHash ) { return false; }
 
       var albumID=null,
@@ -2193,6 +2285,7 @@ nanoGALLERY v5.5.1 release notes.
           // back button and no hash --> display first album
           G.lastLocationHash='';
           OpenAlbum(0,false,-1,false);
+          return true;
         }
       }
       
@@ -2433,7 +2526,7 @@ nanoGALLERY v5.5.1 release notes.
       G.pgMaxNbThumbnailsPerRow=NbThumbnailsPerRow();
       
       // backup values used in animations/transitions
-      G.custGlobals.oldBorderColor=$newDiv.css('border-color');
+      G.custGlobals.oldBorderColor=$newDiv.css('border-color-top');
       if( G.custGlobals.oldBorderColor == '' || G.custGlobals.oldBorderColor == null || G.custGlobals.oldBorderColor == undefined ) { G.custGlobals.oldBorderColor='#000'; }
       G.custGlobals.oldLabelOpacity=$newDiv.find('.labelImage').css('opacity');
       var c=jQuery.Color($newDiv.find('.labelImage'),'backgroundColor');
@@ -2894,7 +2987,7 @@ nanoGALLERY v5.5.1 release notes.
 
         JsonParseData(albumIdx, data);
 
-        if( processLocationHash ) {
+        if( processLocationHash || G.O.openOnStart != '') {
           if( !ProcessLocationHash(false) ) {
             DisplayAlbum(albumIdx,setLocationHash);
           }
@@ -3065,7 +3158,7 @@ nanoGALLERY v5.5.1 release notes.
         else {
           FlickrParsePhotos(albumIdx, data);
         }
-        if( processLocationHash ) {
+        if( processLocationHash || G.O.openOnStart != '' ) {
           if( !ProcessLocationHash(false) ) {
             DisplayAlbum(albumIdx,setLocationHash);
           }
@@ -3415,7 +3508,7 @@ nanoGALLERY v5.5.1 release notes.
         // url = G.picasa.url() + 'user/'+G.O.userID+'/albumid/'+G.I[albumIdx].GetID()+'?alt=json&kind=photo'+opt+'&thumbsize=320&imgmax=d';
         kind='image';
       }
-  //A    url = url + "&callback=?";
+      //A    url = url + "&callback=?";
       PreloaderShow();
 
       // get the content and display it
@@ -3432,7 +3525,7 @@ nanoGALLERY v5.5.1 release notes.
         PreloaderHide();
         PicasaParseData(albumIdx,data,kind);
         //renderGallery(albumIdx,0);
-        if( processLocationHash ) {
+        if( processLocationHash || G.O.openOnStart != '' ) {
           if( !ProcessLocationHash(false) ) {
             DisplayAlbum(albumIdx,setLocationHash);
           }
@@ -3831,6 +3924,18 @@ nanoGALLERY v5.5.1 release notes.
       G.delayedAlbumIdx=-1;
       G.albumIdxToOpenOnViewerClose=-1;
 
+      if( G.O.thumbnailAlbumDisplayImage && albumIdx != 0 ) {
+        // find first image of the album
+        var l=G.I.length;
+        for( var i=0; i<l; i++ ) {
+          if( G.I[i].albumID == G.I[albumIdx].GetID() ) {
+            DisplayImage( i );
+            break;
+          }
+        }
+        return;
+      }
+      
       if( G.containerViewerDisplayed ) {
         CloseInternalViewer(false);
       }
@@ -3896,9 +4001,9 @@ nanoGALLERY v5.5.1 release notes.
     
     function manageGalleryToolbar( albumIdx ) {
       var displayToolbar=false;
-    
+
       // Breadcrumb
-      if( G.O.displayBreadcrumb == true ) {
+      if( G.O.displayBreadcrumb == true && !G.O.thumbnailAlbumDisplayImage ) {
         if( G.$E.conBC.children().length == 0 ) {
           G.$E.conNavBCon.css({opacity:0, 'max-height':'0px'});
         }
@@ -4584,11 +4689,11 @@ nanoGALLERY v5.5.1 release notes.
 
       jQuery($eltInViewport).each(function(){
         var $image=jQuery(this).find('img');
-        if( jQuery($image).attr('src') == G.emptyGif ) {
+        if( $image.attr('src') == G.emptyGif ) {
           var idx=jQuery(this).data('index');
           if( idx == undefined || G.I[idx] == undefined ) { return; }
-          jQuery($image).attr('src','');
-          jQuery($image).attr('src',G.I[idx].thumbImg().src);
+          $image.attr('src','');
+          $image.attr('src',G.I[idx].thumbImg().src);
         }
       });
     }
@@ -4776,7 +4881,7 @@ nanoGALLERY v5.5.1 release notes.
       return;
       
       
-      
+      // TODO: remove following
       $elt.animate({opacity: 0}, 100).promise().done(function(){
 
         // remove gallery elements
@@ -5416,7 +5521,9 @@ nanoGALLERY v5.5.1 release notes.
             break;
             
           case 'scale120':
-            G.$E.base.css({overflow: 'visible'});
+            if( !G.$E.base.hasClass('fullpage') ) {
+              G.$E.base.css({overflow: 'visible'});
+            }
             G.$E.conTn.css({overflow: 'visible'});
             newCSSTransform(item, 'base', $e);
             SetCSSTransform(item, 'base');
@@ -5449,7 +5556,9 @@ nanoGALLERY v5.5.1 release notes.
             break;
             
           case 'overScaleOutside':
-            G.$E.base.css({overflow: 'visible'});
+            if( !G.$E.base.hasClass('fullpage') ) {
+              G.$E.base.css({overflow: 'visible'});
+            }
             G.$E.conTn.css({overflow: 'visible'});
             $e.css({overflow: 'visible'});
             var $t=item.$getElt('.imgContainer');
@@ -5653,7 +5762,9 @@ nanoGALLERY v5.5.1 release notes.
                 item.$getElt('.labelImage').css({bottom:G.tn.imgcBorderWidth/2, left:0, right:0});
                 break;
             }
-            G.$E.base.css({overflow: 'visible'});
+            if( !G.$E.base.hasClass('fullpage') ) {
+              G.$E.base.css({overflow: 'visible'});
+            }
             G.$E.conTn.css({overflow: 'visible'});
             $e.css({overflow: 'visible'});
             setElementOnTop( '', $e);
@@ -5695,7 +5806,9 @@ nanoGALLERY v5.5.1 release notes.
                 item.$getElt('.labelImage').css({bottom:G.tn.imgcBorderWidth/2, left:0, right:0});
                 break;
             }
-            G.$E.base.css({overflow: 'visible'});
+            if( !G.$E.base.hasClass('fullpage') ) {
+              G.$E.base.css({overflow: 'visible'});
+            }
             G.$E.conTn.css({overflow: 'visible'});
             $e.css({overflow: 'visible'});
             setElementOnTop( '', $e);
@@ -6141,8 +6254,14 @@ nanoGALLERY v5.5.1 release notes.
         // retrieve the 'from' values
         var fr={};
         for( var key in anime) {
-          fr[key]=$e.css(key);
-          if( fr[key] == 'transparent' ) {  // some browser return "transparent" as rgba(0,0,0,0)
+          if( key == 'borderColor' ) {
+            // borderColor is not supported in Firefox
+            fr[key]=$e.css('borderTopColor');
+          }
+          else {
+            fr[key]=$e.css(key);
+          }
+          if( fr[key] == 'transparent' ) {  // some browser return "transparent" as rgba(0,0,0,0), 
             if( $e.hasClass('labelImage') ) {
               fr[key]='rgb('+G.custGlobals.oldLabelRed+','+G.custGlobals.oldLabelGreen+','+G.custGlobals.oldLabelBlue+',0.01)';
             }
@@ -6394,7 +6513,10 @@ nanoGALLERY v5.5.1 release notes.
                 TnAni($e, j, { borderColorRed:co[0], borderColorGreen:co[1], borderColorBlue:co[2], colorAlpha:co[3] }, item );
               }
               else {
-                TnAni($e, j, { borderColor: lighterColor(G.custGlobals.oldBorderColor,0.5) }, item );
+                // TnAni($e, j, { borderColor: lighterColor(G.custGlobals.oldBorderColor,0.5) }, item );
+                var c=$e.css('borderTopColor');
+                $e.data('ngcache_borderColor',c);
+                TnAni($e, j, { borderColor: lighterColor(c,0.5) }, item );
               }
               break;
               
@@ -6405,7 +6527,10 @@ nanoGALLERY v5.5.1 release notes.
                 TnAni($e, j, { borderColorRed:co[0], borderColorGreen:co[1], borderColorBlue:co[2], colorAlpha:co[3] }, item );
               }
               else {
-                TnAni($e, j, { borderColor: darkerColor(G.custGlobals.oldBorderColor,0.5) }, item );
+                // TnAni($e, j, { borderColor: darkerColor(G.custGlobals.oldBorderColor,0.5) }, item );
+                var c=$e.css('borderTopColor');
+                $e.data('ngcache_borderColor',c);
+                TnAni($e, j, { borderColor: darkerColor(c,0.5) }, item );
               }
               break;
               
@@ -6570,9 +6695,15 @@ nanoGALLERY v5.5.1 release notes.
         // retrieve the 'from' values
         var fr={};
         for( var key in anime) {
-          fr[key]=$e.css(key);
-          if( fr[key] == 'transparent' ) {  // some browser return "transparent" as rgba(0,0,0,0)
-            fr[key]='rgba(0,0,0,0.01)';
+          if( key == 'borderColor' ) {
+            // borderColor is not supported in Firefox
+            fr[key]=$e.css('borderTopColor');
+          }
+          else {
+            fr[key]=$e.css(key);
+            if( fr[key] == 'transparent' ) {  // some browser return "transparent" as rgba(0,0,0,0)
+              fr[key]='rgba(0,0,0,0.01)';
+            }
           }
         }
         var tweenable = new NGTweenable();
@@ -6795,7 +6926,8 @@ nanoGALLERY v5.5.1 release notes.
                 TnAniO($e, j, { borderColorRed:co[0], borderColorGreen:co[1], borderColorBlue:co[2], colorAlpha:co[3] } );
               }
               else {
-                TnAniO($e, j, { borderColor: G.custGlobals.oldBorderColor } );
+                // TnAniO($e, j, { borderColor: G.custGlobals.oldBorderColor } );
+                TnAniO($e, j, { borderColor: $e.data('ngcache_borderColor') } );
               }
               break;
               
