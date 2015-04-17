@@ -1,8 +1,36 @@
 nanoGALLERY - jQuery plugin 
 ===========
 
-ChangeLog
+ChangeLog 
 ------
+
+v5.6.0
+------
+
+##### New API method  
+- **setSelectMode**: Enter/leave the selection mode, and set the kind.  
+  Possible values: true, false or can be a single kind : 'album' or 'image'.  
+  `$('#yourElement').nanoGallery('setSelectMode', true|false|'album'|'image');`  
+
+##### New option  
+- **keepSelection**: do not lose selection on navigation  .
+  *boolean; Default: false*  
+
+##### Misc
+- changed the touch swipe sensibility on gallery  
+
+**Many thanks to Raphaël Renaudon (https://github.com/sevarg) for his contribution.**
+
+
+v5.5.4
+------
+
+##### New API method  
+- **displayItem**: display an item (album or image).  
+  `$('#yourElement').nanoGallery('displayItem', 'itemID');`  
+  itemID syntax to display an album: 'albumID'  
+  itemID syntax to display an image: 'albumID/imageID'  
+
 
 v5.5.3
 ------
